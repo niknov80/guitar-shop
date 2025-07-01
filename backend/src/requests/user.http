@@ -1,0 +1,33 @@
+### ✅ Успешная регистрация
+POST http://localhost:3000/users/register
+Content-Type: application/json
+
+{
+  "name": "TestUser",
+  "email": "test@example.com",
+  "password": "secret12"
+}
+
+###
+
+### ❌ Ошибка валидации (короткий пароль)
+POST http://localhost:3000/users/register
+Content-Type: application/json
+
+{
+  "name": "BadUser",
+  "email": "bad@example.com",
+  "password": "123"
+}
+
+###
+
+### ❌ Пустое имя + невалидный email
+POST http://localhost:3000/users/register
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "notanemail",
+  "password": "validpass"
+}
