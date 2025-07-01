@@ -1,0 +1,50 @@
+{
+  "name": "guitar-shop-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "cli": "ts-node src/cli/index.ts",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "6.0.0",
+    "dotenv": "17.0.0",
+    "express": "5.1.0",
+    "jsonwebtoken": "9.0.2",
+    "mongoose": "8.16.1",
+    "pino": "9.7.0",
+    "tslib": "2.8.1",
+    "zod": "3.25.67"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.30.0",
+    "@types/bcrypt": "5.0.2",
+    "@types/express": "5.0.3",
+    "@types/jsonwebtoken": "9.0.10",
+    "@types/node": "24.0.8",
+    "@typescript-eslint/eslint-plugin": "8.35.1",
+    "@typescript-eslint/parser": "8.35.1",
+    "eslint": "9.30.0",
+    "eslint-config-prettier": "10.1.5",
+    "eslint-import-resolver-typescript": "4.4.4",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "5.5.1",
+    "eslint-plugin-promise": "7.2.1",
+    "eslint-plugin-simple-import-sort": "12.1.1",
+    "eslint-plugin-unused-imports": "4.1.4",
+    "prettier": "3.6.2",
+    "ts-node": "10.9.2",
+    "ts-node-dev": "2.0.0",
+    "typescript": "5.8.3"
+  }
+}
