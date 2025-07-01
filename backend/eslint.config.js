@@ -9,7 +9,15 @@ const tsImportResolver = require('eslint-import-resolver-typescript');
 
 module.exports = [
   {
-    ignores: ['**/node_modules/**', '**/dist/**', '**/*.log', '**/.env*', 'specification/', 'tmp/'],
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/*.log',
+      '**/.env*',
+      'specification/',
+      'tmp/',
+      'markup/',
+    ],
   },
   eslintConfigPrettier,
   importPlugin.flatConfigs.recommended,
