@@ -1,0 +1,308 @@
+openapi: 3.1.0
+info:
+  title: Guitar Shop API
+  version: 1.0.0
+  description: REST API для управления пользователями и товарами в Guitar Shop
+
+servers:
+  - url: http://localhost:3000/api
+
+tags:
+  - name: Users
+    description: Операции с пользователями
+  - name: Products
+    description: Операции с товарами
+
+paths:
+  /users/register:
+    post:
+      tags:
+        - Users
+      summary: Регистрация нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+      responses:
+        '201':
+          description: Успешная регистрация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Ошибка валидации
+
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Аутентификация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDto'
+      responses:
+        '200':
+          description: Успешная аутентификация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        '401':
+          description: Неверный логин или пароль
+
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Получить информацию об авторизованном пользователе
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Пользователь не авторизован
+
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Получить список товаров
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [электро, акустика, укулеле]
+        - in: query
+          name: stringCount
+          schema:
+            type: integer
+            enum: [4, 6, 7, 12]
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            enum: [price, createdAt]
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum: [asc, desc]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Список товаров
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+    post:
+      tags:
+        - Products
+      summary: Создать товар
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductDto'
+      responses:
+        '201':
+          description: Товар создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Ошибка валидации
+
+  /products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Получить товар по ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Товар найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Товар не найден
+
+    put:
+      tags:
+        - Products
+      summary: Обновить товар
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductDto'
+      responses:
+        '200':
+          description: Товар обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+    delete:
+      tags:
+        - Products
+      summary: Удалить товар
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Успешное удаление
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RegisterUserDto:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 15
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 5
+          maxLength: 12
+
+    LoginUserDto:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+
+    CreateProductDto:
+      type: object
+      required:
+        - name
+        - description
+        - photo
+        - type
+        - vendorCode
+        - stringCount
+        - price
+      properties:
+        name:
+          type: string
+          minLength: 10
+          maxLength: 100
+        description:
+          type: string
+          minLength: 20
+          maxLength: 1024
+        photo:
+          type: string
+        type:
+          type: string
+          enum: [электро, акустика, укулеле]
+        vendorCode:
+          type: string
+          minLength: 5
+          maxLength: 40
+        stringCount:
+          type: integer
+          enum: [4, 6, 7, 12]
+        price:
+          type: number
+          minimum: 100
+          maximum: 1000000
+
+    Product:
+      allOf:
+        - $ref: '#/components/schemas/CreateProductDto'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
