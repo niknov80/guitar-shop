@@ -31,3 +31,23 @@ Content-Type: application/json
   "email": "notanemail",
   "password": "validpass"
 }
+
+### ✅ Успешный вход
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "secret12"
+}
+
+###
+
+### ❌ Ошибка валидации (некорректный email)
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+  "email": "notanemail",
+  "password": "123"
+}
