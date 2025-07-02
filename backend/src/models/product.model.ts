@@ -15,7 +15,7 @@ const productSchema = new Schema(
       minlength: 20,
       maxlength: 1024,
     },
-    photo: {
+    image: {
       type: String,
       required: true,
     },
@@ -24,16 +24,17 @@ const productSchema = new Schema(
       required: true,
       enum: Object.values(GuitarType),
     },
-    vendorCode: {
+    article: {
       type: String,
       required: true,
+      unique: true,
       minlength: 5,
       maxlength: 40,
     },
     stringCount: {
       type: Number,
       required: true,
-      enum: GuitarStringCounts,
+      enum: Object.values(GuitarStringCounts),
     },
     price: {
       type: Number,

@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import env from './config/env.config';
 import { errorHandler } from './middlewares/error.middleware';
+import productRoutes from './routes/product.route';
 import userRoutes from './routes/user.route';
 
 /**
@@ -41,6 +42,7 @@ export const createApp = (): Express => {
 
   // Основные маршруты
   app.use('/users', userRoutes);
+  app.use('/products', productRoutes);
 
   // Глобальная обработка ошибок
   app.use(errorHandler);

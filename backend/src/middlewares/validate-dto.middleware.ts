@@ -17,7 +17,7 @@ export const validateDto =
         message: 'Validation error',
         errors: result.error.format(),
       });
-      return; // 🟢 обязательно укажи return
+      return;
     }
 
     req.body = result.data;

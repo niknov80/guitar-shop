@@ -1,4 +1,4 @@
-### ✅ Успешная регистрация
+### Успешная регистрация
 POST http://localhost:3000/users/register
 Content-Type: application/json
 
@@ -10,7 +10,7 @@ Content-Type: application/json
 
 ###
 
-### ❌ Ошибка валидации (короткий пароль)
+### Ошибка валидации (короткий пароль)
 POST http://localhost:3000/users/register
 Content-Type: application/json
 
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 ###
 
-### ❌ Пустое имя + невалидный email
+### Пустое имя + невалидный email
 POST http://localhost:3000/users/register
 Content-Type: application/json
 
@@ -32,7 +32,7 @@ Content-Type: application/json
   "password": "validpass"
 }
 
-### ✅ Успешный вход
+### Успешный вход
 POST http://localhost:3000/users/login
 Content-Type: application/json
 
@@ -43,7 +43,7 @@ Content-Type: application/json
 
 ###
 
-### ❌ Ошибка валидации (некорректный email)
+### Ошибка валидации (некорректный email)
 POST http://localhost:3000/users/login
 Content-Type: application/json
 

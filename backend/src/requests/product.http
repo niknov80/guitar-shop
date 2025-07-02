@@ -1,0 +1,93 @@
+### Получить список товаров (GET /products)
+GET http://localhost:3000/products
+Authorization: Bearer {{access_token}}
+
+###
+
+### Получить товар по ID (GET /products/:id)
+GET http://localhost:3000/products/{{product_id}}
+Authorization: Bearer {{access_token}}
+
+###
+
+### Успешное создание товара (POST /products) — через файл
+# Работает в Bruno/Postman — WebStorm может не передать файл
+POST http://localhost:3000/products
+Authorization: Bearer {{access_token}}
+
+image=@./test-data/guitar.png;type=image/png
+name=Ibanez RG 55000
+description=Мощная гитара для метал-музыки и соло.
+type=электро
+article=IBZ94444
+stringCount=6
+price=75000
+
+###
+
+### Ошибка валидации: короткое имя, плохой тип, 0 цена
+POST http://localhost:3000/products
+Authorization: Bearer {{access_token}}
+
+image=@./test-data/guitar.png;type=image/png
+name=Bad
+description=Мало букв
+type=неизвестный
+article=A1
+stringCount=9
+price=0
+
+###
+
+### Обновить товар (PATCH /products/:id)
+PATCH http://localhost:3000/products/{{product_id}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "price": 59900,
+  "name": "Ibanez RG Updated"
+}
+
+###
+
+### Удалить товар (DELETE /products/:id)
+DELETE http://localhost:3000/products/{{product_id}}
+Authorization: Bearer {{access_token}}
+
+###
+
+### ✅ Получить все товары (по умолчанию)
+GET http://localhost:3000/products
+Authorization: Bearer {{access_token}}
+###
+
+### ✅ Пагинация: вторая страница
+GET http://localhost:3000/products?page=2
+Authorization: Bearer {{access_token}}
+###
+
+### ✅ Фильтрация по типу гитары (электро)
+GET http://localhost:3000/products?type=электро
+Authorization: Bearer {{access_token}}
+###
+
+### ✅ Фильтрация по количеству струн (6)
+GET http://localhost:3000/products?stringCount=6
+Authorization: Bearer {{access_token}}
+###
+
+### ✅ Фильтрация по диапазону цены
+GET http://localhost:3000/products?minPrice=20000&maxPrice=60000
+Authorization: Bearer {{access_token}}
+###
+
+### ✅ Сортировка по цене по убыванию
+GET http://localhost:3000/products?sort=priceDesc
+Authorization: Bearer {{access_token}}
+###
+
+### ✅ Комбинация: фильтр + сортировка + пагинация
+GET http://localhost:3000/products?type=электро&stringCount=12&minPrice=10000&maxPrice=200000&sort=dateDesc&page=1
+Authorization: Bearer {{access_token}}
+###
