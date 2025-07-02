@@ -1,5 +1,11 @@
-import { DEFAULT_SORT, PAGE_SIZE, PRICE_RANGE } from '../constants/product.constant';
+import {
+  DEFAULT_PAGE,
+  DEFAULT_SORT,
+  PAGE_SIZE,
+  PRODUCT_SORT_VALUES,
+} from '../constants/product.constant';
 import { ProductModel } from '../models/product.model';
+import { ProductRdo } from '../rdo/product.rdo';
 import { CreateProductDto, GetProductsQuery, UpdateProductDto } from '../schemas/product.schema';
 
 /**
@@ -9,72 +15,85 @@ export class ProductService {
   /**
    * Создаёт новый товар.
    * @param dto - Данные для создания товара.
-   * @returns Созданный товар.
+   * @returns DTO для ответа.
    */
-  static async create(dto: CreateProductDto) {
-    return await ProductModel.create(dto);
+  static async create(dto: CreateProductDto): Promise<ProductRdo> {
+    const product = await ProductModel.create(dto);
+    return new ProductRdo(product);
   }
 
   /**
    * Возвращает список товаров с учётом фильтрации, сортировки и пагинации.
    * @param query - Параметры запроса (фильтры, сортировка, страница).
-   * @returns Массив товаров.
+   * @returns Массив DTO товаров.
    */
-  static async findAll(query: GetProductsQuery) {
+  static async findAll(query: GetProductsQuery): Promise<ProductRdo[]> {
     const {
-      page = 1,
+      page = DEFAULT_PAGE,
       type,
       stringCount,
-      minPrice = PRICE_RANGE.MIN,
-      maxPrice = PRICE_RANGE.MAX,
       sort = DEFAULT_SORT,
+      minPrice,
+      maxPrice,
     } = query;
 
-    const filter: Record<string, unknown> = {
-      price: { $gte: minPrice, $lte: maxPrice },
-    };
-
+    const filter: Record<string, unknown> = {};
     if (type) filter.type = type;
     if (stringCount) filter.stringCount = stringCount;
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      const priceFilter: Record<string, number> = {};
+      if (minPrice !== undefined) priceFilter.$gte = minPrice;
+      if (maxPrice !== undefined) priceFilter.$lte = maxPrice;
+      filter.price = priceFilter;
+    }
 
-    const sortOptions: Record<string, Record<string, 1 | -1>> = {
+    const sortOptions: Record<(typeof PRODUCT_SORT_VALUES)[number], Record<string, 1 | -1>> = {
       priceAsc: { price: 1 },
       priceDesc: { price: -1 },
       dateAsc: { createdAt: 1 },
       dateDesc: { createdAt: -1 },
     };
 
-    const sortBy = sortOptions[sort] ?? sortOptions[DEFAULT_SORT];
+    const sortBy = sortOptions[sort] || { createdAt: 1 };
     const skip = (page - 1) * PAGE_SIZE;
 
-    return await ProductModel.find(filter).sort(sortBy).skip(skip).limit(PAGE_SIZE).exec();
+    const products = await ProductModel.find(filter)
+      .sort(sortBy)
+      .skip(skip)
+      .limit(PAGE_SIZE)
+      .exec();
+
+    return products.map(product => new ProductRdo(product));
   }
 
   /**
    * Возвращает товар по его ID.
    * @param id - Идентификатор товара.
-   * @returns Найденный товар или null.
+   * @returns DTO товара или null.
    */
-  static async findById(id: string) {
-    return await ProductModel.findById(id).exec();
+  static async findById(id: string): Promise<ProductRdo | null> {
+    const product = await ProductModel.findById(id).exec();
+    return product ? new ProductRdo(product) : null;
   }
 
   /**
    * Обновляет товар по ID.
    * @param id - Идентификатор товара.
    * @param dto - Данные для обновления.
-   * @returns Обновлённый товар или null.
+   * @returns DTO товара или null.
    */
-  static async updateById(id: string, dto: UpdateProductDto) {
-    return await ProductModel.findByIdAndUpdate(id, dto, { new: true }).exec();
+  static async updateById(id: string, dto: UpdateProductDto): Promise<ProductRdo | null> {
+    const updated = await ProductModel.findByIdAndUpdate(id, dto, { new: true }).exec();
+    return updated ? new ProductRdo(updated) : null;
   }
 
   /**
    * Удаляет товар по ID.
    * @param id - Идентификатор товара.
-   * @returns Удалённый товар или null.
+   * @returns DTO удалённого товара или null.
    */
-  static async deleteById(id: string) {
-    return await ProductModel.findByIdAndDelete(id).exec();
+  static async deleteById(id: string): Promise<ProductRdo | null> {
+    const deleted = await ProductModel.findByIdAndDelete(id).exec();
+    return deleted ? new ProductRdo(deleted) : null;
   }
 }

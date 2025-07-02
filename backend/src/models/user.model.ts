@@ -1,6 +1,18 @@
-import { model, Schema } from 'mongoose';
+import { HydratedDocument, model, Schema } from 'mongoose';
 
-const userSchema = new Schema({
+/**
+ * Локальный тип для схемы Mongoose
+ * (используется только на бэке, без фронтовых DTO)
+ */
+export interface UserEntity {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export type UserDocument = HydratedDocument<UserEntity>;
+
+const userSchema = new Schema<UserEntity>({
   name: {
     type: String,
     required: true,

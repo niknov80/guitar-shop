@@ -1,7 +1,25 @@
-import { model, Schema } from 'mongoose';
+import { HydratedDocument, model, Schema } from 'mongoose';
 import { GuitarStringCounts, GuitarType } from '../constants/product.constant';
 
-const productSchema = new Schema(
+/**
+ * Локальный тип для схемы Mongoose
+ * (используется только на бэке, без фронтовых DTO)
+ */
+export interface ProductEntity {
+  name: string;
+  description: string;
+  image: string;
+  type: string;
+  article: string;
+  stringCount: number;
+  price: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type ProductDocument = HydratedDocument<ProductEntity>;
+
+const productSchema = new Schema<ProductEntity>(
   {
     name: {
       type: String,

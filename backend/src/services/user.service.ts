@@ -2,7 +2,9 @@ import bcrypt from 'bcrypt';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import env from '../config/env.config';
 import { JWT_ALGORITHM, SALT_ROUNDS } from '../constants/auth.constant';
-import { UserModel } from '../models/user.model';
+import { ResponseMessages } from '../constants/response-message.constant';
+import { UserDocument, UserModel } from '../models/user.model';
+import { UserRdo } from '../rdo/user.rdo';
 
 /**
  * Сервис для работы с пользователями.
@@ -17,20 +19,16 @@ export class UserService {
    * @returns Информация о созданном пользователе (без пароля)
    * @throws Error если пользователь с таким email уже существует
    */
-  static async createUser(name: string, email: string, password: string) {
+  static async createUser(name: string, email: string, password: string): Promise<UserRdo> {
     const existing = await UserModel.findOne({ email });
     if (existing) {
-      throw new Error('User with this email already exists');
+      throw new Error(ResponseMessages.EmailInUse);
     }
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const user = await UserModel.create({ name, email, password: hashedPassword });
 
-    return {
-      id: user._id.toString(),
-      name: user.name,
-      email: user.email,
-    };
+    return new UserRdo(user);
   }
 
   /**
@@ -44,12 +42,12 @@ export class UserService {
   static async validateUser(email: string, password: string): Promise<string> {
     const user = await UserModel.findOne({ email });
     if (!user) {
-      throw new Error('User not found');
+      throw new Error(ResponseMessages.UserNotFound);
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new Error('Invalid password');
+      throw new Error(ResponseMessages.InvalidPassword);
     }
 
     const tokenPayload = { email: user.email };
@@ -69,16 +67,12 @@ export class UserService {
    * @returns Объект пользователя без пароля
    * @throws Error если пользователь не найден
    */
-  static async getCurrentUser(userId: string) {
+  static async getCurrentUser(userId: string): Promise<UserRdo> {
     const user = await UserModel.findById(userId).select('-password');
     if (!user) {
-      throw new Error('User not found');
+      throw new Error(ResponseMessages.UserNotFound);
     }
 
-    return {
-      id: user._id.toString(),
-      name: user.name,
-      email: user.email,
-    };
+    return new UserRdo(user as UserDocument);
   }
 }
