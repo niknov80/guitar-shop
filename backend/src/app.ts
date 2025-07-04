@@ -2,10 +2,11 @@ import cors from 'cors';
 import express, { Express } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import env from './config/env.config';
 import { errorHandler } from './middlewares/error.middleware';
 import productRoutes from './routes/product.route';
 import userRoutes from './routes/user.route';
+import logger from './shared/logger/logger';
+import path from 'path';
 
 /**
  * Создаёт и настраивает экземпляр Express-приложения.
@@ -28,17 +29,37 @@ export const createApp = (): Express => {
   app.use(express.json());
   app.use(
     cors({
-      origin: env.FRONTEND_URL,
+      origin: true,
       credentials: true,
     })
   );
-  app.use(helmet());
+
+  app.use((req, _res, next) => {
+    logger.info(`🌍 Incoming request: ${req.method} ${req.url}, origin: ${req.headers.origin}`);
+    next();
+  });
+
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+    })
+  );
+
   app.use(morgan('dev'));
 
   // Системный маршрут для мониторинга
   app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });
   });
+
+  app.use(
+    '/static',
+    express.static(path.resolve(__dirname, '..', 'static'), {
+      setHeaders: res => {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      },
+    })
+  );
 
   // Основные маршруты
   app.use('/users', userRoutes);

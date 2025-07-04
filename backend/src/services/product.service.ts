@@ -27,7 +27,11 @@ export class ProductService {
    * @param query - Параметры запроса (фильтры, сортировка, страница).
    * @returns Массив DTO товаров.
    */
-  static async findAll(query: GetProductsQuery): Promise<ProductRdo[]> {
+  static async findAll(query: GetProductsQuery): Promise<{
+    items: ProductRdo[];
+    totalPages: number;
+    currentPage: number;
+  }> {
     const {
       page = DEFAULT_PAGE,
       type,
@@ -38,8 +42,24 @@ export class ProductService {
     } = query;
 
     const filter: Record<string, unknown> = {};
-    if (type) filter.type = type;
-    if (stringCount) filter.stringCount = stringCount;
+
+    if (type) {
+      const types = type.split(',').filter(Boolean);
+      if (types.length > 0) {
+        filter.type = { $in: types };
+      }
+    }
+
+    if (stringCount) {
+      const counts = stringCount
+        .split(',')
+        .map(c => parseInt(c, 10))
+        .filter(c => !isNaN(c));
+      if (counts.length > 0) {
+        filter.stringCount = { $in: counts };
+      }
+    }
+
     if (minPrice !== undefined || maxPrice !== undefined) {
       const priceFilter: Record<string, number> = {};
       if (minPrice !== undefined) priceFilter.$gte = minPrice;
@@ -57,13 +77,19 @@ export class ProductService {
     const sortBy = sortOptions[sort] || { createdAt: 1 };
     const skip = (page - 1) * PAGE_SIZE;
 
-    const products = await ProductModel.find(filter)
-      .sort(sortBy)
-      .skip(skip)
-      .limit(PAGE_SIZE)
-      .exec();
+    const [products, totalItems] = await Promise.all([
+      ProductModel.find(filter).sort(sortBy).skip(skip).limit(PAGE_SIZE).exec(),
+      ProductModel.countDocuments(filter),
+    ]);
 
-    return products.map(product => new ProductRdo(product));
+    const items = products.map(product => new ProductRdo(product));
+    const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+
+    return {
+      items,
+      totalPages,
+      currentPage: page,
+    };
   }
 
   /**

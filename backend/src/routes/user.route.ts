@@ -26,4 +26,6 @@ router.post('/login', validateDto(loginUserSchema), UserController.loginUser);
  */
 router.get('/me', authMiddleware, UserController.getCurrentUser);
 
+router.get('/check', authMiddleware, UserController.checkAuth);
+
 export default router;

@@ -19,7 +19,11 @@ export class UserService {
    * @returns Информация о созданном пользователе (без пароля)
    * @throws Error если пользователь с таким email уже существует
    */
-  static async createUser(name: string, email: string, password: string): Promise<UserRdo> {
+  static async createUser(
+    name: string,
+    email: string,
+    password: string
+  ): Promise<{ user: UserRdo; token: string }> {
     const existing = await UserModel.findOne({ email });
     if (existing) {
       throw new Error(ResponseMessages.EmailInUse);
@@ -28,7 +32,23 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const user = await UserModel.create({ name, email, password: hashedPassword });
 
-    return new UserRdo(user);
+    const payload = {
+      sub: user._id.toString(),
+      email: user.email,
+      name: user.name,
+    };
+
+    const jwtOptions: SignOptions = {
+      expiresIn: env.JWT_EXPIRES_IN,
+      algorithm: JWT_ALGORITHM as jwt.Algorithm,
+    };
+
+    const token = jwt.sign(payload, env.JWT_SECRET, jwtOptions);
+
+    return {
+      user: new UserRdo(user),
+      token,
+    };
   }
 
   /**
@@ -50,7 +70,7 @@ export class UserService {
       throw new Error(ResponseMessages.InvalidPassword);
     }
 
-    const tokenPayload = { email: user.email };
+    const tokenPayload = { email: user.email, name: user.name };
     const jwtOptions: SignOptions = {
       subject: user._id.toString(),
       expiresIn: env.JWT_EXPIRES_IN,

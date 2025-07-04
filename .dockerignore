@@ -1,0 +1,22 @@
+# Исключаем зависимости и билд
+**/node_modules
+**/dist
+**/build
+
+# IDE и системные файлы
+.vscode
+.idea
+.DS_Store
+*.log
+
+# Git
+.git
+.gitignore
+
+# Локальные конфиги
+.env.local
+.env.development
+.env.production
+
+# Локальный output
+npm-debug.log

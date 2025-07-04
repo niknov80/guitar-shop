@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
-import pino from 'pino';
-
-const logger = pino();
+import logger from '../shared/logger/logger';
 
 export const connectToDatabase = async (uri: string) => {
   try {

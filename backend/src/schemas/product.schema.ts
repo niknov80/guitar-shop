@@ -47,9 +47,9 @@ export const getProductsQuerySchema = z.object({
 
   sort: z.enum(PRODUCT_SORT_VALUES).optional(),
 
-  type: z.enum(Object.values(GuitarType) as [string, ...string[]]).optional(),
+  type: z.string().optional(),
 
-  stringCount: stringCountSchema.optional(),
+  stringCount: z.string().optional(),
 
   minPrice: z
     .preprocess(val => (typeof val === 'string' ? Number(val) : val), z.number().min(0))

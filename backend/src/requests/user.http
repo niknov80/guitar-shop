@@ -4,8 +4,8 @@ Content-Type: application/json
 
 {
   "name": "TestUser",
-  "email": "test@example.com",
-  "password": "secret12"
+  "email": "test1@example.com",
+  "password": "secret122"
 }
 
 ###
@@ -51,3 +51,16 @@ Content-Type: application/json
   "email": "notanemail",
   "password": "123"
 }
+
+###
+
+### Проверка авторизации пользователя (GET /users/me)
+GET http://localhost:3000/users/me
+Authorization: Bearer {{access_token}}
+
+###
+### Проверка авторизации пользователя (GET /users/check)
+GET http://localhost:3000/users/check
+Authorization: Bearer {{access_token}}
+
+###

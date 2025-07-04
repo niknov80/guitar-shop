@@ -6,6 +6,8 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
     'htmlacademy/react-typescript',
   ],
   parser: '@typescript-eslint/parser',
@@ -14,8 +16,15 @@ module.exports = {
     sourceType: 'module',
     project: 'tsconfig.json',
   },
-  settings: { react: { version: 'detect' } },
-  plugins: ['react-refresh'],
+  settings: {
+    react: { version: 'detect' },
+    'import/resolver': {
+      typescript: {
+        project: './tsconfig.json',
+      },
+    },
+  },
+  plugins: ['react-refresh', 'import'],
   rules: {
     'react-refresh/only-export-components': 'warn',
   },

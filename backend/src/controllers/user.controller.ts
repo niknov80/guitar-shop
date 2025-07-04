@@ -14,8 +14,12 @@ export class UserController {
   static async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, email, password } = req.body;
-      const user = await UserService.createUser(name, email, password);
-      res.status(201).json(user);
+      const { user, token } = await UserService.createUser(name, email, password);
+
+      res.status(201).json({
+        user,
+        accessToken: token,
+      });
     } catch (error) {
       next(error);
     }
@@ -55,5 +59,9 @@ export class UserController {
     } catch (error) {
       next(error);
     }
+  }
+
+  static async checkAuth(req: Request, res: Response) {
+    res.status(200).json(req.user);
   }
 }

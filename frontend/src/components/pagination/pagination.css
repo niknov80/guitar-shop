@@ -1,0 +1,14 @@
+.pagination__page--disabled .pagination__page-link {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pagination__decoration {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #ccc;
+  border-radius: 50%;
+  margin-left: 4px;
+}

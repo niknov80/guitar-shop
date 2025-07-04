@@ -1,5 +1,5 @@
-import { ProductResponse } from '../../../shared/types/product-responce.type';
 import { ProductDocument } from '../models/product.model';
+import { ProductResponse } from '../types/product-responce.type';
 
 /**
  * DTO для возврата товара в API-ответе.

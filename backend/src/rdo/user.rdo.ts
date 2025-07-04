@@ -1,5 +1,5 @@
-import { UserResponse } from '../../../shared/types/user-response.type';
 import { UserDocument } from '../models/user.model';
+import { UserResponse } from '../types/user-response.type';
 
 /**
  * DTO для ответа с данными пользователя.

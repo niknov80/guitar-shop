@@ -1,21 +1,14 @@
 import dotenv from 'dotenv';
 import path from 'path';
-import pino from 'pino';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import { createApp } from './app';
 import env from './config/env.config';
 import { connectToDatabase } from './config/mongodb.config';
+import logger from './shared/logger/logger';
 
 // Загрузка .env
 dotenv.config();
-
-// Логгер
-const logger = pino({
-  transport: {
-    target: 'pino-pretty',
-  },
-});
 
 // Переменные окружения
 const port: number = Number(env.PORT);
@@ -32,7 +25,10 @@ if (!mongoUri) {
 async function bootstrap() {
   try {
     await connectToDatabase(mongoUri);
+
     const app = createApp();
+
+    logger.info(`✅ App created. CORS allowed origin: ${env.FRONTEND_URL}`);
 
     app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
 

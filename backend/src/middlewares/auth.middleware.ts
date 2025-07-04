@@ -10,6 +10,7 @@ declare module 'express-serve-static-core' {
     user?: {
       id: string;
       email: string;
+      name?: string;
     };
   }
 }
@@ -27,11 +28,16 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
 
   try {
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, env.JWT_SECRET) as { sub: string; email: string };
+    const decoded = jwt.verify(token, env.JWT_SECRET) as {
+      sub: string;
+      email: string;
+      name: string;
+    };
 
     req.user = {
       id: decoded.sub,
       email: decoded.email,
+      name: decoded.name,
     };
 
     next();
