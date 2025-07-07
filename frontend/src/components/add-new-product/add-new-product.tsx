@@ -21,7 +21,6 @@ function AddNewProduct(): JSX.Element {
       <div className="add-item__form-left">
         <div className="edit-item-image add-item__form-image">
           <div className="edit-item-image__image-wrap">
-            <p>Файл: {fileName}</p>
             {imagePreview && (
               <img
                 src={imagePreview}

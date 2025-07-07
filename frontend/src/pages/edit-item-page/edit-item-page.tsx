@@ -33,7 +33,7 @@ function EditProduct(): JSX.Element {
               <div className="edit-item-image__image-wrap">
                 <img
                   className="edit-item-image__image"
-                  src={imagePreview ?? `${product?.image}`}
+                  src={imagePreview ?? `\\${product?.image}`}
                   width="133"
                   height="332"
                   alt={product?.name}

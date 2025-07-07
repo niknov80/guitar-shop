@@ -13,9 +13,13 @@ const VALIDATION_ERROR_MESSAGE = 'Validation error';
 export const validateDto =
   <T>(schema: ZodSchema<T>) =>
   (req: Request, res: Response, next: NextFunction): void => {
+    console.log('✅ validateDto called', req.method, req.url);
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
+      console.log('❌ Validation failed:', result.error.format());
+      console.log('📦 Incoming body:', req.body);
+
       res.status(BAD_REQUEST_STATUS).json({
         message: VALIDATION_ERROR_MESSAGE,
         errors: result.error.format(),

@@ -41,7 +41,7 @@ function ProductPage(): JSX.Element {
         <div className="product-container">
           <img
             className="product-container__img"
-            src={`${product.image}`}
+            src={`\\${product.image}`}
             width="90"
             height="235"
             alt={product.name}

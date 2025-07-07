@@ -11,21 +11,25 @@ const router = Router();
  * @route POST /users/register
  * @desc Регистрация нового пользователя
  */
-router.post('/register', validateDto(registerUserSchema), UserController.registerUser);
+router.post(
+  '/register',
+  validateDto(registerUserSchema),
+  UserController.registerUser.bind(UserController)
+);
 
 /**
  * @route POST /users/login
  * @desc Аутентификация пользователя
  */
-router.post('/login', validateDto(loginUserSchema), UserController.loginUser);
+router.post('/login', validateDto(loginUserSchema), UserController.loginUser.bind(UserController));
 
 /**
  * @route GET /users/me
  * @desc Получение текущего пользователя по токену
  * @access Protected
  */
-router.get('/me', authMiddleware, UserController.getCurrentUser);
+router.get('/me', authMiddleware, UserController.getCurrentUser.bind(UserController));
 
-router.get('/check', authMiddleware, UserController.checkAuth);
+router.get('/check', authMiddleware, UserController.checkAuth.bind(UserController));
 
 export default router;

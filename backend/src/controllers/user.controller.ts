@@ -12,6 +12,7 @@ export class UserController {
    * @route POST /users/register
    */
   static async registerUser(req: Request, res: Response, next: NextFunction) {
+    console.log('>> register handler called', req.body);
     try {
       const { name, email, password } = req.body;
       const { user, token } = await UserService.createUser(name, email, password);

@@ -7,7 +7,7 @@ import {
 } from '../schemas/product.schema';
 import { ProductService } from '../services/product.service';
 
-const STATIC_IMG_PATH = '/static/img/';
+const STATIC_IMG_PATH = 'static/img/';
 
 /**
  * Контроллер для работы с товарами.

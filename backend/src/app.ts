@@ -40,7 +40,7 @@ const APP_CONSTANTS = {
  */
 export const createApp = (): Express => {
   const app = express();
-
+  console.log('createApp called');
   app.use(express.json());
 
   app.use(
