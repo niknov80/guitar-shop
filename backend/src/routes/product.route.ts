@@ -2,8 +2,6 @@ import { Router } from 'express';
 import { ProductController } from '../controllers/product.controller';
 import { authMiddleware } from '../middlewares/auth.middleware';
 import { uploadImage } from '../middlewares/upload.middleware';
-import { validateDto } from '../middlewares/validate-dto.middleware';
-import { updateProductSchema } from '../schemas/product.schema';
 
 const router = Router();
 
@@ -33,12 +31,7 @@ router.post('/', authMiddleware, uploadImage, ProductController.create);
  * @desc Обновить товар по ID (application/json)
  * @access Protected
  */
-router.patch(
-  '/:id',
-  authMiddleware,
-  validateDto(updateProductSchema),
-  ProductController.updateById
-);
+router.patch('/:id', authMiddleware, uploadImage, ProductController.updateById);
 
 /**
  * @route DELETE /products/:id

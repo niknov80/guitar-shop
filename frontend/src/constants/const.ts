@@ -7,6 +7,10 @@ export const AppRoute = {
   AddProduct: '/add',
   EditProduct: '/products/:id/edit',
   NotFound: '*',
+
+  // функции для генерации ссылок
+  getProductPath: (id: string) => `/products/${id}`,
+  getEditProductPath: (id: string) => `/products/${id}/edit`,
 };
 
 export const APIRoute = {
@@ -46,3 +50,12 @@ export const MainMenuType = {
   Admin: [MenuItem.Catalog, MenuItem.ProductList],
   Public: [MenuItem.Catalog, MenuItem.WhereBuy, MenuItem.About],
 };
+
+export const ProductLimits = {
+  Name: { Min: 10, Max: 100 },
+  Description: { Min: 20, Max: 1024 },
+  Article: { Min: 5, Max: 40 },
+  Price: { Min: 100, Max: 1_000_000 },
+};
+
+export const STRING_COUNTS = [4, 6, 7, 12] as const;

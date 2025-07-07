@@ -1,8 +1,13 @@
 import { HydratedDocument, model, Schema } from 'mongoose';
 
+// Ограничения валидации
+const NAME_MIN_LENGTH = 1;
+const NAME_MAX_LENGTH = 15;
+const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
+
 /**
- * Локальный тип для схемы Mongoose
- * (используется только на бэке, без фронтовых DTO)
+ * Mongoose-сущность пользователя.
+ * Используется только на серверной стороне.
  */
 export interface UserEntity {
   name: string;
@@ -12,18 +17,22 @@ export interface UserEntity {
 
 export type UserDocument = HydratedDocument<UserEntity>;
 
+/**
+ * Схема пользователя для MongoDB.
+ * Используется при регистрации и авторизации.
+ */
 const userSchema = new Schema<UserEntity>({
   name: {
     type: String,
     required: true,
-    minlength: 1,
-    maxlength: 15,
+    minlength: NAME_MIN_LENGTH,
+    maxlength: NAME_MAX_LENGTH,
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    match: /^\S+@\S+\.\S+$/,
+    match: EMAIL_REGEX,
   },
   password: {
     type: String,
@@ -31,4 +40,7 @@ const userSchema = new Schema<UserEntity>({
   },
 });
 
+/**
+ * Модель пользователя, связанная с коллекцией `users` в MongoDB.
+ */
 export const UserModel = model('User', userSchema);

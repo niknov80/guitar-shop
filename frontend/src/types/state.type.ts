@@ -20,4 +20,6 @@ export type ProductState = {
   currentPage: number;
   sort: SortValue;
   filters: ProductFilter;
+  currentProduct: ProductResponse | null;
+  isProductLoading: boolean;
 };

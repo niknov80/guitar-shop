@@ -1,5 +1,6 @@
 import { matchPath } from 'react-router-dom';
-import { AppRoute, MainMenuType } from '../constants/const.ts';
+import { AppRoute, MainMenuType, STRING_COUNTS } from '../constants/const.ts';
+import { StringCount } from '../types/product.type.ts';
 
 export type TTypeAs<T extends Record<string, string>> = T[keyof T];
 
@@ -31,4 +32,10 @@ export const parseCommaSeparated = <T = string>(input?: string): T[] => {
     return [];
   }
   return input.split(',').filter(Boolean) as T[];
+};
+
+export const isStringCount = (value: unknown): value is StringCount => {
+  return (
+    typeof value === 'number' && STRING_COUNTS.includes(value as StringCount)
+  );
 };

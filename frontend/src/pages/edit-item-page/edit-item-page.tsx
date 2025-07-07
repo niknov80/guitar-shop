@@ -1,162 +1,173 @@
-import { JSX } from 'react';
+import { JSX, useRef, useState } from 'react';
+import { useEditProductForm } from '../../hooks/use-edit-product-form.ts'; // подключаем наш хук
+import { useNavigate } from 'react-router-dom';
+import { AppRoute, STRING_COUNTS } from '../../constants/const.ts';
+import { useSelector } from 'react-redux';
+import { selectProduct } from '../../store/product/product.selectors.ts';
+import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs.tsx';
 
-function EditItemPage(): JSX.Element {
+function EditProduct(): JSX.Element {
+  const navigate = useNavigate();
+  const product = useSelector(selectProduct);
+  const {
+    register,
+    formState: { errors },
+    onSubmit,
+    setValue,
+  } = useEditProductForm();
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [fileName, setFileName] = useState('');
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   return (
     <section className="edit-item">
       <div className="container">
-        <h1 className="edit-item__title">СURT Z30 Plus</h1>
-        <ul className="breadcrumbs">
-          <li className="breadcrumbs__item">
-            <a className="link" href="./main.html">
-              Вход
-            </a>
-          </li>
-          <li className="breadcrumbs__item">
-            <a className="link">Товары</a>
-          </li>
-          <li className="breadcrumbs__item">
-            <a className="link">СURT Z30 Plus</a>
-          </li>
-        </ul>
-        <form className="edit-item__form" action="#" method="get">
+        <h1 className="edit-item__title">
+          {product?.name ?? 'Редактирование'}
+        </h1>
+        <Breadcrumbs />
+        <form className="edit-item__form" onSubmit={onSubmit}>
           <div className="edit-item__form-left">
             <div className="edit-item-image edit-item__form-image">
               <div className="edit-item-image__image-wrap">
                 <img
                   className="edit-item-image__image"
-                  src="img/content/add-item-1.png"
-                  srcSet="img/content/add-item-1@2x.png 2x"
+                  src={imagePreview ?? `${product?.image}`}
                   width="133"
                   height="332"
-                  alt="СURT Z30 Plus"
+                  alt={product?.name}
                 />
               </div>
+
               <div className="edit-item-image__btn-wrap">
-                <button className="button button--small button--black-border edit-item-image__btn">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setFileName(file.name);
+                      setImagePreview(URL.createObjectURL(file));
+                      setValue('image', file, { shouldValidate: true });
+                    }
+                  }}
+                />
+
+                <button
+                  className="button button--small button--black-border edit-item-image__btn"
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                >
                   Заменить
                 </button>
-                <button className="button button--small button--black-border edit-item-image__btn">
-                  Удалить
-                </button>
+
+                {fileName && (
+                  <button
+                    className="button button--small button--black-border edit-item-image__btn"
+                    type="button"
+                    onClick={() => {
+                      setFileName('');
+                      setImagePreview(null);
+                      setValue('image', undefined, { shouldValidate: true });
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                      }
+                    }}
+                  >
+                    Удалить
+                  </button>
+                )}
               </div>
             </div>
+
             <div className="input-radio edit-item__form-radio">
               <span>Тип товара</span>
-              <input type="radio" id="guitar" name="item-type" value="guitar" />
-              <label htmlFor="guitar">Акустическая гитара</label>
-              <input
-                type="radio"
-                id="el-guitar"
-                name="item-type"
-                value="el-guitar"
-                checked
-              />
-              <label htmlFor="el-guitar">Электрогитара</label>
-              <input
-                type="radio"
-                id="ukulele"
-                name="item-type"
-                value="ukulele"
-              />
-              <label htmlFor="ukulele">Укулеле</label>
+              {['аккустика', 'электро', 'укулеле'].map((type) => (
+                <div key={type}>
+                  <input
+                    type="radio"
+                    id={`type-${type}`}
+                    value={type}
+                    {...register('type')}
+                  />
+                  <label htmlFor={`type-${type}`}>
+                    {type === 'аккустика'
+                      ? 'Акустическая гитара'
+                      : type === 'электро'
+                        ? 'Электрогитара'
+                        : 'Укулеле'}
+                  </label>
+                </div>
+              ))}
+              {errors.type && <p>{errors.type.message}</p>}
             </div>
+
             <div className="input-radio edit-item__form-radio">
               <span>Количество струн</span>
-              <input
-                type="radio"
-                id="string-qty-4"
-                name="string-qty"
-                value="4"
-                checked
-              />
-              <label htmlFor="string-qty-4">4</label>
-              <input
-                type="radio"
-                id="string-qty-6"
-                name="string-qty"
-                value="6"
-              />
-              <label htmlFor="string-qty-6">6</label>
-              <input
-                type="radio"
-                id="string-qty-7"
-                name="string-qty"
-                value="7"
-              />
-              <label htmlFor="string-qty-7">7</label>
-              <input
-                type="radio"
-                id="string-qty-12"
-                name="string-qty"
-                value="12"
-              />
-              <label htmlFor="string-qty-12">12</label>
+              {STRING_COUNTS.map((count) => (
+                <div key={count}>
+                  <input
+                    type="radio"
+                    id={`string-qty-${count}`}
+                    value={String(count)}
+                    {...register('stringCount')}
+                  />
+                  <label htmlFor={`string-qty-${count}`}>{count}</label>
+                </div>
+              ))}
+              {errors.stringCount && <p>{errors.stringCount.message}</p>}
             </div>
           </div>
+
           <div className="edit-item__form-right">
-            <div className="custom-input edit-item__form-input">
-              <label>
-                <span>Дата добавления товара</span>
-                <input
-                  type="text"
-                  name="date"
-                  value="19.09.2022"
-                  placeholder="Дата в формате 00.00.0000"
-                  readOnly
-                />
-              </label>
-              <p>Заполните поле</p>
-            </div>
             <div className="custom-input edit-item__form-input">
               <label>
                 <span>Наименование товара</span>
                 <input
                   type="text"
-                  name="title"
-                  value="СURT Z30 Plus"
                   placeholder="Наименование"
+                  {...register('name')}
                 />
               </label>
-              <p>Заполните поле</p>
+              {errors.name && <p>{errors.name.message}</p>}
             </div>
+
             <div className="custom-input edit-item__form-input edit-item__form-input--price">
               <label>
                 <span>Цена товара</span>
                 <input
                   type="text"
-                  name="price"
-                  value="27 000"
                   placeholder="Цена в формате 00 000"
+                  {...register('price')}
                 />
               </label>
-              <p>Заполните поле</p>
+              {errors.price && <p>{errors.price.message}</p>}
             </div>
+
             <div className="custom-input edit-item__form-input">
               <label>
                 <span>Артикул товара</span>
                 <input
                   type="text"
-                  name="sku"
-                  value="SO757575"
                   placeholder="Артикул товара"
+                  {...register('article')}
                 />
               </label>
-              <p>Заполните поле</p>
+              {errors.article && <p>{errors.article.message}</p>}
             </div>
+
             <div className="custom-textarea edit-item__form-textarea">
               <label>
                 <span>Описание товара</span>
-                <textarea name="description" placeholder="">
-                  Гитара подходит как для старта обучения, так и для домашних
-                  занятий или использования в полевых условиях, например, в
-                  походах или для проведения уличных выступлений. Доступная
-                  стоимость, качество и надежная конструкция, а также приятный
-                  внешний вид, который сделает вас звездой вечеринки.
-                </textarea>
+                <textarea placeholder="Описание" {...register('description')} />
               </label>
-              <p>Заполните поле</p>
+              {errors.description && <p>{errors.description.message}</p>}
             </div>
           </div>
+
           <div className="edit-item__form-buttons-wrap">
             <button
               className="button button--small edit-item__form-button"
@@ -167,6 +178,7 @@ function EditItemPage(): JSX.Element {
             <button
               className="button button--small edit-item__form-button"
               type="button"
+              onClick={() => navigate(AppRoute.Products)}
             >
               Вернуться к списку товаров
             </button>
@@ -177,4 +189,4 @@ function EditItemPage(): JSX.Element {
   );
 }
 
-export default EditItemPage;
+export default EditProduct;

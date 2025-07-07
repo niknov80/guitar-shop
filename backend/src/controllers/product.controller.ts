@@ -7,6 +7,8 @@ import {
 } from '../schemas/product.schema';
 import { ProductService } from '../services/product.service';
 
+const STATIC_IMG_PATH = '/static/img/';
+
 /**
  * Контроллер для работы с товарами.
  */
@@ -31,7 +33,7 @@ export class ProductController {
         return;
       }
 
-      req.body.image = `/static/img/${req.file.filename}`;
+      req.body.image = `${STATIC_IMG_PATH}${req.file.filename}`;
 
       const parsed = createProductSchema.safeParse(req.body);
       if (!parsed.success) {
@@ -106,6 +108,10 @@ export class ProductController {
    */
   static async updateById(req: Request, res: Response, next: NextFunction) {
     try {
+      if (req.file) {
+        req.body.image = `${STATIC_IMG_PATH}${req.file.filename}`;
+      }
+
       const parsed = updateProductSchema.safeParse(req.body);
       if (!parsed.success) {
         res.status(400).json({ errors: parsed.error.format() });

@@ -8,6 +8,7 @@ import { UserDataType } from '../types/user.type.ts';
 import { ThunkApiConfig } from './types.ts';
 import { ProductListResponse } from '../types/product.type.ts';
 import { StateType } from '../types/state.type.ts';
+import { ProductResponse } from '../types/product-responce.type.ts';
 
 const createAppAsyncThunk = createAsyncThunk.withTypes<ThunkApiConfig>();
 
@@ -82,5 +83,55 @@ export const fetchProducts = createAppAsyncThunk<ProductListResponse, number>(
     });
 
     return data;
+  },
+);
+
+export const createProductAction = createAppAsyncThunk<
+  ProductListResponse,
+  FormData
+>(`${NameSpace.Product}/create`, async (formData, { extra: api }) => {
+  const { data } = await api.post<ProductListResponse>(
+    APIRoute.Products,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    },
+  );
+  return data;
+});
+
+export const fetchProductById = createAppAsyncThunk<ProductResponse, string>(
+  `${NameSpace.Product}/fetchById`,
+  async (id, { extra: api }) => {
+    const { data } = await api.get<ProductResponse>(
+      `${APIRoute.Products}/${id}`,
+    );
+    return data;
+  },
+);
+
+export const updateProductAction = createAppAsyncThunk<
+  ProductResponse,
+  { id: string; formData: FormData }
+>(`${NameSpace.Product}/update`, async ({ id, formData }, { extra: api }) => {
+  const { data } = await api.patch<ProductResponse>(
+    `${APIRoute.Products}/${id}`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    },
+  );
+
+  return data;
+});
+
+export const deleteProductAction = createAppAsyncThunk<void, string>(
+  `${NameSpace.Product}/delete`,
+  async (id, { extra: api }) => {
+    await api.delete(`${APIRoute.Products}/${id}`);
   },
 );

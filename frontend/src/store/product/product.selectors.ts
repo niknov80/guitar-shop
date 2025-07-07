@@ -17,3 +17,9 @@ export const selectSort = (state: StateType) => state[NameSpace.Product].sort;
 
 export const selectFilters = (state: StateType) =>
   state[NameSpace.Product].filters;
+
+export const selectProduct = (state: StateType) =>
+  state[NameSpace.Product].currentProduct;
+
+export const selectIsProductLoading = (state: StateType) =>
+  state[NameSpace.Product].isProductLoading;

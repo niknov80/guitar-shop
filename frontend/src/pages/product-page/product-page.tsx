@@ -1,8 +1,38 @@
-import { JSX } from 'react';
-import { Link } from 'react-router-dom';
-import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs.tsx';
+import { JSX, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
+import { useSelector } from 'react-redux';
+import { fetchProductById } from '../../store/api-actions.ts';
+import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs.tsx';
+import { useAppDispatch } from '../../hooks';
+import {
+  selectIsProductLoading,
+  selectProduct,
+} from '../../store/product/product.selectors.ts';
 function ProductPage(): JSX.Element {
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+  const product = useSelector(selectProduct);
+  const isLoading = useSelector(selectIsProductLoading);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchProductById(id));
+    }
+  }, [id, dispatch]);
+
+  if (isLoading || !product) {
+    return (
+      <section className="product">
+        <div className="container">
+          <h1 className="page-content__title title title--bigger">
+            Загрузка...
+          </h1>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="product">
       <div className="container">
@@ -11,52 +41,51 @@ function ProductPage(): JSX.Element {
         <div className="product-container">
           <img
             className="product-container__img"
-            src="img/content/catalog-product-1.png"
-            srcSet="img/content/catalog-product-1@2x.png 2x"
+            src={`${product.image}`}
             width="90"
             height="235"
-            alt=""
+            alt={product.name}
           />
           <div className="product-container__info-wrapper">
             <h2 className="product-container__title title title--big title--uppercase">
-              СURT Z30 Plus
+              {product.name}
             </h2>
             <br />
             <br />
             <div className="tabs">
-              <Link
+              <a
                 className="button button--medium tabs__button"
-                to="#characteristics"
+                href="#characteristics"
               >
                 Характеристики
-              </Link>
-              <Link
+              </a>
+              <a
                 className="button button--black-border button--medium tabs__button"
-                to="#description"
+                href="#description"
               >
                 Описание
-              </Link>
+              </a>
               <div className="tabs__content" id="characteristics">
                 <table className="tabs__table">
-                  <tr className="tabs__table-row">
-                    <td className="tabs__title">Артикул:</td>
-                    <td className="tabs__value">SO754565</td>
-                  </tr>
-                  <tr className="tabs__table-row">
-                    <td className="tabs__title">Тип:</td>
-                    <td className="tabs__value">Электрогитара</td>
-                  </tr>
-                  <tr className="tabs__table-row">
-                    <td className="tabs__title">Количество струн:</td>
-                    <td className="tabs__value">6 струнная</td>
-                  </tr>
+                  <tbody>
+                    <tr className="tabs__table-row">
+                      <td className="tabs__title">Артикул:</td>
+                      <td className="tabs__value">{product.article}</td>
+                    </tr>
+                    <tr className="tabs__table-row">
+                      <td className="tabs__title">Тип:</td>
+                      <td className="tabs__value">{product.type}</td>
+                    </tr>
+                    <tr className="tabs__table-row">
+                      <td className="tabs__title">Количество струн:</td>
+                      <td className="tabs__value">
+                        {product.stringCount} струнная
+                      </td>
+                    </tr>
+                  </tbody>
                 </table>
-                <p className="tabs__product-description hidden">
-                  Гитара подходит как для старта обучения, так и для домашних
-                  занятий или использования в полевых условиях, например, в
-                  походах или для проведения уличных выступлений. Доступная
-                  стоимость, качество и надежная конструкция, а также приятный
-                  внешний вид, который сделает вас звездой вечеринки.
+                <p className="tabs__product-description" id="description">
+                  {product.description}
                 </p>
               </div>
             </div>

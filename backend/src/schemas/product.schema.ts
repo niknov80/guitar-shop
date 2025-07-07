@@ -26,16 +26,24 @@ export const createProductSchema = z.object({
   ),
 });
 
+/**
+ * DTO для создания товара (после успешной валидации).
+ */
 export type CreateProductDto = z.infer<typeof createProductSchema>;
 
 /**
- * Схема для обновления товара (PATCH).
+ * Схема валидации тела запроса для обновления товара.
+ * Все поля являются необязательными (partial).
  */
 export const updateProductSchema = createProductSchema.partial();
+
+/**
+ * DTO для обновления товара.
+ */
 export type UpdateProductDto = z.infer<typeof updateProductSchema>;
 
 /**
- * Схема валидации query-параметров для списка товаров.
+ * Схема валидации query-параметров при получении списка товаров.
  */
 export const getProductsQuerySchema = z.object({
   page: z
@@ -60,4 +68,7 @@ export const getProductsQuerySchema = z.object({
     .optional(),
 });
 
+/**
+ * Тип для query-параметров фильтрации товаров.
+ */
 export type GetProductsQuery = z.infer<typeof getProductsQuerySchema>;

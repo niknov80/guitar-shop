@@ -57,37 +57,37 @@ Authorization: Bearer {{access_token}}
 
 ###
 
-### ✅ Получить все товары (по умолчанию)
+### Получить все товары (по умолчанию)
 GET http://localhost:3000/products
 Authorization: Bearer {{access_token}}
 ###
 
-### ✅ Пагинация: вторая страница
+### Пагинация: вторая страница
 GET http://localhost:3000/products?page=2
 Authorization: Bearer {{access_token}}
 ###
 
-### ✅ Фильтрация по типу гитары (электро)
+### Фильтрация по типу гитары (электро)
 GET http://localhost:3000/products?type=электро
 Authorization: Bearer {{access_token}}
 ###
 
-### ✅ Фильтрация по количеству струн (6)
+### Фильтрация по количеству струн (6)
 GET http://localhost:3000/products?stringCount=6
 Authorization: Bearer {{access_token}}
 ###
 
-### ✅ Фильтрация по диапазону цены
+### Фильтрация по диапазону цены
 GET http://localhost:3000/products?minPrice=20000&maxPrice=60000
 Authorization: Bearer {{access_token}}
 ###
 
-### ✅ Сортировка по цене по убыванию
+### Сортировка по цене по убыванию
 GET http://localhost:3000/products?sort=priceDesc
 Authorization: Bearer {{access_token}}
 ###
 
-### ✅ Комбинация: фильтр + сортировка + пагинация
+### Комбинация: фильтр + сортировка + пагинация
 GET http://localhost:3000/products?type=электро&stringCount=12&minPrice=10000&maxPrice=200000&sort=dateDesc&page=1
 Authorization: Bearer {{access_token}}
 ###

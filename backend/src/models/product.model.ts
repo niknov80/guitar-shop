@@ -1,9 +1,19 @@
 import { HydratedDocument, model, Schema } from 'mongoose';
 import { GuitarStringCounts, GuitarType } from '../constants/product.constant';
 
+// Ограничения валидации
+const NAME_MIN_LENGTH = 10;
+const NAME_MAX_LENGTH = 100;
+const DESCRIPTION_MIN_LENGTH = 20;
+const DESCRIPTION_MAX_LENGTH = 1024;
+const ARTICLE_MIN_LENGTH = 5;
+const ARTICLE_MAX_LENGTH = 40;
+const PRICE_MIN = 100;
+const PRICE_MAX = 1_000_000;
+
 /**
- * Локальный тип для схемы Mongoose
- * (используется только на бэке, без фронтовых DTO)
+ * Mongoose-сущность продукта.
+ * Используется только на серверной стороне.
  */
 export interface ProductEntity {
   name: string;
@@ -19,19 +29,23 @@ export interface ProductEntity {
 
 export type ProductDocument = HydratedDocument<ProductEntity>;
 
+/**
+ * Схема продукта для MongoDB.
+ * Включает автоматические метки времени и все ограничения, заданные ТЗ.
+ */
 const productSchema = new Schema<ProductEntity>(
   {
     name: {
       type: String,
       required: true,
-      minlength: 10,
-      maxlength: 100,
+      minlength: NAME_MIN_LENGTH,
+      maxlength: NAME_MAX_LENGTH,
     },
     description: {
       type: String,
       required: true,
-      minlength: 20,
-      maxlength: 1024,
+      minlength: DESCRIPTION_MIN_LENGTH,
+      maxlength: DESCRIPTION_MAX_LENGTH,
     },
     image: {
       type: String,
@@ -46,8 +60,8 @@ const productSchema = new Schema<ProductEntity>(
       type: String,
       required: true,
       unique: true,
-      minlength: 5,
-      maxlength: 40,
+      minlength: ARTICLE_MIN_LENGTH,
+      maxlength: ARTICLE_MAX_LENGTH,
     },
     stringCount: {
       type: Number,
@@ -57,8 +71,8 @@ const productSchema = new Schema<ProductEntity>(
     price: {
       type: Number,
       required: true,
-      min: 100,
-      max: 1000000,
+      min: PRICE_MIN,
+      max: PRICE_MAX,
     },
   },
   {
@@ -66,4 +80,7 @@ const productSchema = new Schema<ProductEntity>(
   }
 );
 
+/**
+ * Модель продукта, используемая для взаимодействия с коллекцией в MongoDB.
+ */
 export const ProductModel = model('Product', productSchema);

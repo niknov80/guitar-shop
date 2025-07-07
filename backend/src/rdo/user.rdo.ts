@@ -2,12 +2,17 @@ import { UserDocument } from '../models/user.model';
 import { UserResponse } from '../types/user-response.type';
 
 /**
- * DTO для ответа с данными пользователя.
- * Используется для скрытия лишних полей и нормализации ответа.
+ * DTO (Response Data Object) для возврата пользователя в API-ответе.
+ * Используется для скрытия лишних полей и нормализации структуры.
  */
 export class UserRdo implements UserResponse {
+  /** Уникальный идентификатор пользователя */
   id: string;
+
+  /** Имя пользователя */
   name: string;
+
+  /** Email пользователя */
   email: string;
 
   constructor(user: UserDocument) {
